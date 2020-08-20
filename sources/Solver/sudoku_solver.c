@@ -97,9 +97,13 @@ int n_strats_used;
 int problem_found = FALSE;
 int silent = FALSE;
 int backtracking = FALSE;
-
+static char board[100];
 //==================================================================== main
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
+    char* file;
+    FILE* fp;
+    int i;
   printf("*** sudoku_solver ***\n");
 
 #ifdef USE_FILES
@@ -161,32 +165,40 @@ int main(int argc, char *argv[]) {
 
   // Check for the presence of an input Sudoku string
   if (argc < 2) {
-    puts("*** You need to provide a sudoku string");
+    puts("*** You need to provide a sudoku string input file");
     return EXIT_FAILURE;
     }
+  file = argv[1];
+  fp = fopen(file, "rb");
+  if (!fp) {
+      fprintf(stderr, "Error: Unable to open '%s'\n", file);
+      return EXIT_FAILURE;
+  }
+
+  fprintf(stdout, "Loading file '%s'\n", file);
+  //if(!fgets(board, sizeof(board), stdin)) exit(0);
+  i = (int)fread(board, 1, 81, fp);
+  fclose(fp);
 
   // Check that the Sudoku string is 81-characters long
-  if (strlen(argv[1]) != 81) {
+  if (i != 81) {
     puts("*** The sudoku string must be 81 characters long");
     return EXIT_FAILURE;
     }
-
+  board[81] = 0;
   // Check that the Sudoku string consists of digits between 0 and 9
   for (int k = 0; k < 81; k++) {
-    if (argv[1][k] < '0' || argv[1][k] > '9') {
+    if (board[k] < '0' || board[k] > '9') {
       puts("*** The sudoku string must only contain 0 to 9 digits");
       return EXIT_FAILURE;
       }
     }
 
   // Print the Sudoku string
-  if (argc > 2) {
-    printf("--- \"%s\"\n", argv[2]);
-    }
-  printf("--- \"%s\"\n", argv[1]);
+  printf("--- \"%s\"\n", board);
 
   // Initialize the Sudoku arrays
-  init(argv[1]);
+  init(board);
   display();
 
   // Remove the impossible numbers with an initial cleanup without
