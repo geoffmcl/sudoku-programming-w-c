@@ -23,7 +23,7 @@ rc_p_t intersection(int r1, int c1, int r2, int c2, void *mem) {
   void *mem_foots = malloc((FOOT_N * sizeof(rc_struct_t)) << 1);
   if (mem_foots != NULL) {
     rc_p_t mem1 = (rc_p_t)mem_foots;
-    rc_p_t mem2 = (rc_p_t)(mem_foots + FOOT_N * sizeof(rc_struct_t));
+    rc_p_t mem2 = (rc_p_t)((char *)mem_foots + (FOOT_N * sizeof(rc_struct_t)));
 
     // Obtain the two footprints
     foot1 = footprint(r1, c1, mem1);
